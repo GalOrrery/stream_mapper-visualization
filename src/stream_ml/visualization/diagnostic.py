@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from stream_ml.core.typing import Array
 
 
-def _plot_component_coordinate(
+def _plot_coordinate_component(
     data: Data[Array],
     pars: Params[Array],
     component: str,
@@ -82,7 +82,7 @@ def _plot_component_coordinate(
     return ax
 
 
-def _plot_coord(  # noqa: PLR0913
+def _plot_coordinate_panel(  # noqa: PLR0913
     fig: Figure,
     gs: SubplotSpec,
     coord: str,
@@ -118,7 +118,7 @@ def _plot_coord(  # noqa: PLR0913
 
     # Plot components
     for comp in components:
-        _plot_component_coordinate(
+        _plot_coordinate_component(
             data,
             mpars,
             component=comp,
@@ -151,7 +151,7 @@ def _plot_coord(  # noqa: PLR0913
 
 @add_savefig_option
 @with_tight_layout
-def diagnostic_plot(
+def astrometric_model_panels(
     model: Model[Array],
     /,
     data: Data[Array],
@@ -213,7 +213,7 @@ def diagnostic_plot(
     gs = gridspec.GridSpec(1, len(coords), figure=fig)  # Main gridspec
 
     for i, cn in enumerate(coords):
-        _plot_coord(
+        _plot_coordinate_panel(
             fig=fig,
             gs=gs[i],
             coord=cn,
