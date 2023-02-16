@@ -2,7 +2,7 @@
 
 from astropy.visualization import quantity_support
 
-from stream_ml.visualization.diagnostic import diagnostic_plot
+from stream_ml.visualization.diagnostic import astrometric_model_panels
 from stream_ml.visualization.likelihood import (
     component_likelihood_dataspace,
     component_likelihood_modelspace,
@@ -12,7 +12,7 @@ from stream_ml.visualization.pre import plot_coordinate_histograms_in_phi1_slice
 
 __all__ = [
     "plot_coordinate_histograms_in_phi1_slices",
-    "diagnostic_plot",
+    "astrometric_model_panels",
     # Likelihood
     "component_likelihood_dataspace",
     "component_likelihood_modelspace",
