@@ -165,8 +165,14 @@ def plot_coordinate_histograms_in_phi1_slices(
 
     ax0 = fig.add_subplot(gs0[0, :])
     ax0.scatter(data["phi1"].flatten(), data["phi2"].flatten(), s=1, c="black")
-    ax0.set_xlabel(rf"$\phi_1$ [{ax0.get_xlabel()}]", fontsize=15)
-    ax0.set_ylabel(rf"$\phi_2$ [{ax0.get_ylabel()}]", fontsize=15)
+    ax0.set_xlabel(
+        r"$\phi_1$" + (rf" [{ax0.get_xlabel()}]" if ax0.get_xlabel() else ""),
+        fontsize=15,
+    )
+    ax0.set_ylabel(
+        r"$\phi_2$" + (rf" [{ax0.get_ylabel()}]" if ax0.get_xlabel() else ""),
+        fontsize=15,
+    )
 
     # -----------------------------------------------------
     # Phi1-slice column histograms
