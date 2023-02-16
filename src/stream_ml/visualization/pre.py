@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import itertools
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 from matplotlib import gridspec
@@ -24,13 +24,20 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
     from numpy.typing import NDArray
+    from streaam_ml.core.data import Data
+
+    from stream_ml.core.typing import ArrayLike
 
 
 ########################################################################
 
 
 def _connect_slices_to_top(
-    fig: Figure, axes1: Axes, axes2: Axes, left: Quantity, right: Quantity
+    fig: Figure,
+    axes1: Axes,
+    axes2: Axes,
+    left: Quantity | NDArray[Any],
+    right: Quantity | NDArray[Any],
 ) -> None:
     # Add edges to top plot
     axes1.axvline(left, color="tab:red", ls="--")
@@ -38,7 +45,7 @@ def _connect_slices_to_top(
 
     # Add connection
     con = ConnectionPatch(
-        xyA=(left.value, axes1.get_ylim()[0]),
+        xyA=(np.array(left), axes1.get_ylim()[0]),
         xyB=(0, 1),
         coordsA="data",
         coordsB="axes fraction",
@@ -51,7 +58,7 @@ def _connect_slices_to_top(
     axes1.add_artist(con)
 
     con = ConnectionPatch(
-        xyA=(right.value, axes1.get_ylim()[0]),
+        xyA=(np.array(right), axes1.get_ylim()[0]),
         xyB=(1, 1),
         coordsA="data",
         coordsB="axes fraction",
@@ -65,7 +72,7 @@ def _connect_slices_to_top(
 
 
 def _plot_cooordinate_histogram_column(
-    table: QTable,
+    table: QTable | Data[ArrayLike],
     col_names: tuple[str, ...],
     *,
     ylabels: Mapping[str, str],
@@ -74,7 +81,7 @@ def _plot_cooordinate_histogram_column(
     """Plot coordinate histograms."""
     for row, cn in enumerate(col_names):
         # Histogram
-        axes[row].hist(table[cn], color="gray", density=True)
+        axes[row].hist(table[cn].flatten(), color="gray", density=True)
         axes[row].set_xlabel(f"{ylabels.get(cn, cn)} [{axes[row].get_xlabel()}]")
 
         # Settings
@@ -86,9 +93,9 @@ def _plot_cooordinate_histogram_column(
 # TODO: Add option for CMD plot
 @add_savefig_option
 def plot_coordinate_histograms_in_phi1_slices(
-    data: QTable,
+    data: QTable | Data[ArrayLike],
     /,
-    phi1_edges: tuple[Quantity, ...],
+    phi1_edges: tuple[Quantity | NDArray[Any], ...],
     *,
     col_names: tuple[str, ...] = COL_NAME_DEFAULTS,
     ylabels: Mapping[str, str] = YLABEL_DEFAULTS,
@@ -98,7 +105,7 @@ def plot_coordinate_histograms_in_phi1_slices(
 
     Parameters
     ----------
-    data : `~astropy.table.QTable`
+    data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
         Table with the column names ``col_names``. Must have columns ``phi1``
         and ``phi2``, as well as all in "col_names".
     phi1_edges : tuple[Quantity, ...]
@@ -153,7 +160,7 @@ def plot_coordinate_histograms_in_phi1_slices(
     # Phi1-Phi2 top plot
 
     ax0 = fig.add_subplot(gs0[0, :])
-    ax0.scatter(data["phi1"], data["phi2"], s=1, c="black")
+    ax0.scatter(data["phi1"].flatten(), data["phi2"].flatten(), s=1, c="black")
     ax0.set_xlabel(rf"$\phi_1$ [{ax0.get_xlabel()}]", fontsize=15)
     ax0.set_ylabel(rf"$\phi_2$ [{ax0.get_ylabel()}]", fontsize=15)
 
@@ -173,7 +180,10 @@ def plot_coordinate_histograms_in_phi1_slices(
     # Iterate over phi1 slices, making a column of histograms for each component
     for col, (left, right) in enumerate(itertools.pairwise(phi1_edges)):
         # Per-coordinate plot
-        data_slice: QTable = data[(data["phi1"] >= left) & (data["phi1"] < right)]
+        data_slice = cast(
+            "QTable | Data[ArrayLike]",
+            data[(data["phi1"].flatten() >= left) & (data["phi1"].flatten() < right)],
+        )
 
         _plot_cooordinate_histogram_column(
             data_slice, col_names, ylabels=ylabels, axes=axes[:, col]
