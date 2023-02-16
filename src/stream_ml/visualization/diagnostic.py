@@ -9,7 +9,8 @@ from matplotlib import pyplot as plt
 
 from stream_ml.core.setup_package import WEIGHT_NAME
 from stream_ml.visualization.defaults import COORD_TO_YLABEL
-from stream_ml.visualization.utils.decorator import (
+from stream_ml.visualization.utils.arg_decorators import make_tuple
+from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -151,14 +152,15 @@ def _plot_coordinate_panel(  # noqa: PLR0913
 
 @add_savefig_option
 @with_tight_layout
+@make_tuple("components", "coords")
 def astrometric_model_panels(
     model: Model[Array],
     /,
     data: Data[Array],
     mpars: Params[Array],
     *,
-    component: str | tuple[str, ...] = "stream",
-    coord: str | tuple[str, ...] = "phi2",
+    components: tuple[str, ...] = ("stream",),
+    coords: tuple[str, ...] = ("phi2",),
     **kwargs: Any,
 ) -> Figure:
     r"""Diagnostic plot of the model.
@@ -173,9 +175,9 @@ def astrometric_model_panels(
     mpars : Params[Array]
         The prediction to plot.
 
-    component : str or tuple[str, ...], keyword-only
-        The component to plot.
-    coord : str or tuple[str, ...], keyword-only
+    components : tuple[str, ...], keyword-only
+        The component(s) to plot.
+    coords : tuple[str, ...], keyword-only
         The coordinate(s) to plot.
     savefig : pathlib.Path or str or None, keyword-only
         The path to save the figure to.
@@ -200,11 +202,6 @@ def astrometric_model_panels(
     Figure
         The figure that was plotted.
     """
-    # Now need to figure out how to plot
-    # first munge the component and coord arguments into tuples
-    components = (component,) if isinstance(component, str) else component
-    coords = (coord,) if isinstance(coord, str) else coord
-
     # Now figure out how many rows and columns we need
     figsize = kwargs.pop("figsize", plt.rcParams["figure.figsize"])
     fig = plt.figure(constrained_layout=True, figsize=figsize)

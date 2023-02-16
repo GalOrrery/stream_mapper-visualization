@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import inspect
 import os
 import pathlib
 import warnings
@@ -10,7 +9,6 @@ from functools import wraps
 from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.figure import Figure
 
 __all__: list[str] = []
@@ -128,33 +126,3 @@ def with_ax(plotting_func: Callable[P, R]) -> Callable[P, R]:
         return plotting_func(*args, **kwargs)
 
     return with_ax_inner
-
-
-def with_sorter(plotting_func: Callable[P, R]) -> Callable[P, R]:
-    """Add a sorter to a plotting function.
-
-    Parameters
-    ----------
-    plotting_func : Callable[P, R]
-        The plotting function to add a sorter to.
-
-    Returns
-    -------
-    Callable[P, R]
-        The plotting function with a sorter.
-    """
-    sig = inspect.signature(plotting_func)
-
-    @wraps(plotting_func)
-    def with_sorter_inner(*args: P.args, **kwargs: P.kwargs) -> R:
-        # Get the sorter, or create it if it doesn't exist.
-        if kwargs.get("sorter") is None:
-            ba = sig.bind_partial(*args, **kwargs)
-            data = ba.arguments["data"]
-            sorter = np.argsort(data["phi1"].flatten())
-            kwargs["sorter"] = sorter
-
-        # Call the plotting function.
-        return plotting_func(*args, **kwargs)
-
-    return with_sorter_inner
