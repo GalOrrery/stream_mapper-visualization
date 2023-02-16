@@ -82,7 +82,11 @@ def _plot_cooordinate_histogram_column(
     for row, cn in enumerate(col_names):
         # Histogram
         axes[row].hist(table[cn].flatten(), color="gray", density=True)
-        axes[row].set_xlabel(f"{ylabels.get(cn, cn)} [{axes[row].get_xlabel()}]")
+
+        axes[row].set_xlabel(
+            f"{ylabels.get(cn, cn)}"
+            + (f" [{axes[row].get_xlabel()}]" if axes[row].get_xlabel() else "")
+        )
 
         # Settings
         axes[row].grid()
