@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast
 import numpy as np
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization.defaults import COORD_TO_TABLE, COORD_TO_YLABEL
+from stream_ml.visualization.defaults import COORD_TO_YLABEL
 from stream_ml.visualization.utils.decorator import (
     add_savefig_option,
     with_tight_layout,
@@ -172,16 +172,15 @@ def component_likelihood_dataspace(
     )
 
     for i, c in enumerate(coords):
-        k = COORD_TO_TABLE[c]
-
         axs[i].scatter(
             np.array(data["phi1"].flatten()[sorter]),
-            np.array(data[k].flatten()[sorter]),
+            np.array(data[c].flatten()[sorter]),
             c=prob[sorter],
             cmap="turbo",
             s=10,
             rasterized=True,
             alpha=alpha[sorter],
+            **kwargs,
         )
         axs[i].set_xlabel(r"$\phi_1$", fontsize=15)
         axs[i].set_ylabel(COORD_TO_YLABEL.get(c, c), fontsize=15)
