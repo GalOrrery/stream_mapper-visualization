@@ -200,7 +200,9 @@ def plot_coordinate_histograms_in_phi1_slices(
         )
 
         # Connect coordinate plots to top plot
-        _connect_slices_to_top(fig, ax0, fig.axes[1 + col * 5], left=left, right=right)
+        _connect_slices_to_top(
+            fig, ax0, fig.axes[1 + col * nrows], left=left, right=right
+        )
 
     # Adjust y-axis labels for all but the first column
     for row, col in itertools.product(range(nrows), range(1, ncols)):
