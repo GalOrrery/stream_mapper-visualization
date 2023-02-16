@@ -10,8 +10,16 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 from matplotlib.patches import ConnectionPatch
 
-from stream_ml.visualization.defaults import COL_NAME_DEFAULTS, YLABEL_DEFAULTS
-from stream_ml.visualization.utils.decorator import add_savefig_option
+from stream_ml.visualization.defaults import (
+    COL_NAME_DEFAULTS,
+    COORD_TO_YLABEL,
+    YLABEL_DEFAULTS,
+)
+from stream_ml.visualization.utils.arg_decorators import make_tuple
+from stream_ml.visualization.utils.plt_decorators import (
+    add_savefig_option,
+    with_tight_layout,
+)
 
 __all__: list[str] = []
 
@@ -73,13 +81,13 @@ def _connect_slices_to_top(
 
 def _plot_cooordinate_histogram_column(
     table: QTable | Data[ArrayLike],
-    col_names: tuple[str, ...],
+    coords: tuple[str, ...],
     *,
     ylabels: Mapping[str, str],
     axes: NDArray[Axes],
 ) -> None:
     """Plot coordinate histograms."""
-    for row, cn in enumerate(col_names):
+    for row, cn in enumerate(coords):
         # Histogram
         axes[row].hist(table[cn].flatten(), color="gray", density=True)
 
@@ -95,13 +103,15 @@ def _plot_cooordinate_histogram_column(
 
 
 # TODO: Add option for CMD plot
+# TODO: chang "coords" to "coord"
 @add_savefig_option
+@make_tuple("coords")
 def plot_coordinate_histograms_in_phi1_slices(
     data: QTable | Data[ArrayLike],
     /,
     phi1_edges: tuple[Quantity | NDArray[Any], ...],
     *,
-    col_names: tuple[str, ...] = COL_NAME_DEFAULTS,
+    coords: tuple[str, ...] = COL_NAME_DEFAULTS,
     ylabels: Mapping[str, str] = YLABEL_DEFAULTS,
     **kwargs: Any,
 ) -> Figure:
@@ -110,14 +120,13 @@ def plot_coordinate_histograms_in_phi1_slices(
     Parameters
     ----------
     data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
-        Table with the column names ``col_names``. Must have columns ``phi1``
-        and ``phi2``, as well as all in "col_names".
+        Data with the column names ``coords``. Must have at least ``phi1``
+        and ``phi2``.
     phi1_edges : tuple[Quantity, ...]
         Tuple of phi1 bounds.
+    coords : tuple[str, ...], optional keyword-only
+        Tuple of coordinate names to plot.
 
-    col_names : tuple[str, ...], optional keyword-only
-        Tuple of column names from  ``data``, by default ( "phi1", "phi2",
-        "parallax", "pm_phi1_cosphi2_unrefl", "pm_phi2_unrefl", )
     ylabels : dict[str, str], optional keyword-only
         Dictionary of ylabels for the columns, by default:
 
@@ -146,7 +155,7 @@ def plot_coordinate_histograms_in_phi1_slices(
     # # Connecting line between top plot slice edges and the histograms
     # con_y_top = table["phi2"].min().value
     # Number of rows per column
-    nrows = len(col_names)
+    nrows = len(coords)
     ncols = len(phi1_edges) - 1
 
     # Make the plot and GridSpec, with 2 rows and one column per phi1 slice
@@ -184,7 +193,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         # Make sub-gridspec column of sub-axes
         gsi = gs0[1:, col].subgridspec(nrows, 1, hspace=0.3)
         # Add subplot axes to array
-        for row in range(len(col_names)):
+        for row in range(len(coords)):
             axes[row, col] = fig.add_subplot(gsi[row], sharey=axes[row, 0])
 
     # Iterate over phi1 slices, making a column of histograms for each component
@@ -196,7 +205,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         )
 
         _plot_cooordinate_histogram_column(
-            data_slice, col_names, ylabels=ylabels, axes=axes[:, col]
+            data_slice, coords, ylabels=ylabels, axes=axes[:, col]
         )
 
         # Connect coordinate plots to top plot
@@ -208,5 +217,57 @@ def plot_coordinate_histograms_in_phi1_slices(
     for row, col in itertools.product(range(nrows), range(1, ncols)):
         axes[row, col].tick_params(axis="y", which="both", left=False, labelleft=False)
         axes[row, col].set_ylabel("")
+
+    return fig
+
+
+##############################################################################
+
+
+@add_savefig_option
+@with_tight_layout
+@make_tuple("coords")
+def coord_panels(
+    data: QTable | Data[ArrayLike],
+    /,
+    coords: tuple[str, ...],
+    *,
+    use_hist: bool = False,
+    **kwargs: Any,
+) -> Figure:
+    """Plot a grid of coordinate panels.
+
+    Parameters
+    ----------
+    data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
+        Data with the column names ``coords``. Must have at least ``phi1``
+        and ``phi2``.
+    coords : tuple[str, ...]
+        Tuple of coordinate names to plot.
+    use_hist : bool, optional keyword-only
+        Whether to use a histogram or scatter plot, by default `False`.
+    **kwargs : Any
+        Keyword arguments to pass to stuff.
+
+    Returns
+    -------
+    `matplotlib.figure.Figure`
+        The figure.
+    """
+    fig, axs = plt.subplots(1, len(coords), figsize=(4 * len(coords), 4))
+
+    for i, c in enumerate(coords):
+        if use_hist:
+            kwargs.setdefault("density", True)
+            kwargs.setdefault("bins", 100)
+            kwargs.setdefault("rasterized", True)
+            axs[i].hist2d(data["phi1"].flatten(), data[c].flatten(), **kwargs)
+        else:
+            kwargs.setdefault("rasterized", True)
+            kwargs.setdefault("s", 1)
+            axs[i].scatter(data["phi1"].flatten(), data[c].flatten(), **kwargs)
+
+        axs[i].set_xlabel(r"$\phi_1$")
+        axs[i].set_ylabel(COORD_TO_YLABEL.get(c, c))
 
     return fig

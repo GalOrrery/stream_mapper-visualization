@@ -8,7 +8,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from stream_ml.visualization.defaults import COORD_TO_YLABEL
-from stream_ml.visualization.utils.decorator import (
+from stream_ml.visualization.utils.arg_decorators import make_tuple
+from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -126,10 +127,11 @@ def component_likelihood_modelspace(
 
 @add_savefig_option
 @with_tight_layout
+@make_tuple("coords")
 def component_likelihood_dataspace(
     data: QTable | Data[ArrayLike],
     prob: NDArray[np.floating[Any]],
-    coord: str | tuple[str, ...],
+    coords: tuple[str, ...],
     *,
     alpha_min: float = 0.05,
     **kwargs: Any,
@@ -142,7 +144,7 @@ def component_likelihood_dataspace(
         The data.
     prob : NDArray[np.floating[Any]]
         The probability of each data point.
-    coord : str | tuple[str, ...]
+    coords : tuple[str, ...]
         The coordinate(s) to plot.
 
     alpha_min : float, optional keyword-only
@@ -155,9 +157,6 @@ def component_likelihood_dataspace(
     `~matplotlib.figure.Figure`
         The figure.
     """
-    # Munge the coord argument into a tuple
-    coords = (coord,) if isinstance(coord, str) else coord
-
     # Sort and shade the data by the probability, with the most probable plotted
     # on top.
     sorter = np.argsort(prob.flatten())

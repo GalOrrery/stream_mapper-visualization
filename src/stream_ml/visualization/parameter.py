@@ -5,10 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from stream_ml.core.setup_package import WEIGHT_NAME
-from stream_ml.visualization.utils.decorator import (
+from stream_ml.visualization.utils.arg_decorators import make_tuple, with_sorter
+from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
     with_ax,
-    with_sorter,
 )
 
 __all__: list[str] = []
@@ -26,10 +26,11 @@ if TYPE_CHECKING:
 @add_savefig_option
 @with_sorter
 @with_ax
+@make_tuple("components")
 def weight(
     data: Data[Array],
     mpars: Params[Array],
-    component: str | tuple[str, ...] = "stream",
+    components: tuple[str, ...] = ("stream",),
     *,
     ax: Axes,
     sorter: NDArray[integer[Any]] | bool = True,
@@ -37,7 +38,6 @@ def weight(
 ) -> Axes:
     """Plot the weights as a function of phi1."""
     # Iterate over components, plotting the weight
-    components = component if isinstance(component, tuple) else (component,)
     for comp in components:
         cmpars = mpars.get_prefixed(comp)
 
@@ -57,11 +57,12 @@ def weight(
 @add_savefig_option
 @with_sorter
 @with_ax
+@make_tuple("components", "coords")
 def parameter(
     data: Data[Array],
     mpars: Params[Array],
-    component: str | tuple[str, ...] = "stream",
-    coord: str | tuple[str, ...] = "phi1",
+    components: tuple[str, ...] = ("stream",),
+    coords: tuple[str, ...] = ("phi1",),
     param: str = "mu",
     *,
     ax: Axes,
@@ -77,10 +78,10 @@ def parameter(
     mpars : Params[Array]
         The parameters to plot.
 
-    component : str | tuple[str, ...]
-        The component to plot.
-    coord : str | tuple[str, ...]
-        The coordinate to plot.
+    components : tuple[str, ...]
+        The component(s) to plot.
+    coords : tuple[str, ...]
+        The coordinate(s) to plot.
     param : str
         The parameter to plot.
 
@@ -91,10 +92,6 @@ def parameter(
     **kwargs : dict[str, Any], keyword-only
         Keyword arguments to pass to `~matplotlib.axes.Axe.plot`.
     """
-    # Munge inputs into tuples
-    components = component if isinstance(component, tuple) else (component,)
-    coords = coord if isinstance(coord, tuple) else (coord,)
-
     # Iterate over components
     for comp in components:
         cmpars = mpars.get_prefixed(comp)
