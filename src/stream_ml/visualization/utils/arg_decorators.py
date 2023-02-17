@@ -44,6 +44,7 @@ def with_sorter(plotting_func: Callable[P, R]) -> Callable[P, R]:
         # Get the sorter, or create it if it doesn't exist.
         if kwargs.get("sorter") is None:
             ba = sig.bind_partial(*args, **kwargs)
+            ba.apply_defaults()
             data = ba.arguments["data"]
             sorter = np.argsort(data["phi1"].flatten())
             kwargs["sorter"] = sorter
@@ -87,6 +88,7 @@ def make_tuple(*arg_names: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
         def make_tuple_inner_inner(*args: P.args, **kwargs: P.kwargs) -> R:
             # Get the argument, or create it if it doesn't exist.
             ba = sig.bind_partial(*args, **kwargs)
+            ba.apply_defaults()
             for arg_name in arg_names:
                 arg = ba.arguments[arg_name]
                 ba.arguments[arg_name] = (arg,) if not isinstance(arg, tuple) else arg
