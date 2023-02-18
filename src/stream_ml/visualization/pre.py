@@ -85,11 +85,17 @@ def _plot_cooordinate_histogram_column(
     *,
     ylabels: Mapping[str, str],
     axes: NDArray[Axes],
+    kwargs: dict[str, Any],
 ) -> None:
     """Plot coordinate histograms."""
+    kwargs.setdefault("bins", 10)
+    kwargs.setdefault("color", "gray")
+    kwargs.setdefault("density", True)
+
+    # Iterate over coordinates
     for row, cn in enumerate(coords):
         # Histogram
-        axes[row].hist(table[cn].flatten(), color="gray", density=True)
+        axes[row].hist(table[cn].flatten(), **kwargs)
 
         axes[row].set_xlabel(
             f"{ylabels.get(cn, cn)}"
@@ -205,7 +211,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         )
 
         _plot_cooordinate_histogram_column(
-            data_slice, coords, ylabels=ylabels, axes=axes[:, col]
+            data_slice, coords, ylabels=ylabels, axes=axes[:, col], kwargs=kwargs
         )
 
         # Connect coordinate plots to top plot
