@@ -97,11 +97,11 @@ def parameter(
         cmpars = mpars.get_prefixed(comp)
 
         # Iterate over coordinates
-        for c in coords:
+        for crd in coords:
             ax.plot(
                 data["phi1"].flatten()[sorter],
-                cmpars[(c, param)].flatten()[sorter],
-                label=comp,
+                cmpars[(crd, param)].flatten()[sorter],
+                label=f"{comp}[{crd}]",
                 **kwargs.get(comp, {}),  # TODO: apply sorter
             )
 
