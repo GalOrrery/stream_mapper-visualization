@@ -39,9 +39,6 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
         if a > b:
             msg = "a must be less than b"
             raise ValueError(msg)
-        if np.abs(slope) > 2 / (b - a) ** 2:
-            msg = "slope must be less than 2 / (b - a)^2"
-            raise ValueError(msg)
         self.m: np.float64 = np.float64(slope)
         self._bma: np.float64 = np.float64(b - a)
         super().__init__(
