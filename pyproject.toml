@@ -30,7 +30,7 @@
 
 [project.optional-dependencies]
   all = [
-    "tqdm",
+    "scipy>=1.7",
   ]
   test = [
     "coverage[toml]",
@@ -122,13 +122,16 @@ where = ["src"]
   exclude = '''(^|/)tests/'''
   plugins = ["numpy.typing.mypy_plugin",]
 
-  [[tool.mypy.overrides]]
-    module = "*/tests/*"
-    ignore_errors = true
+[[tool.mypy.overrides]]
+  module = [
+    "*/tests/*",
+    "tests/*"
+  ]
+  ignore_errors = true
 
-  [[tool.mypy.overrides]]
-    module = "tests/*"
-    ignore_errors = true
+[[tool.mypy.overrides]]
+  module = "scipy.stats.*"
+  ignore_missing_imports = true
 
 
 [tool.ruff]
