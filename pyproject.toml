@@ -30,7 +30,7 @@
 
 [project.optional-dependencies]
   all = [
-    "tqdm",
+    "scipy>=1.7",
   ]
   test = [
     "coverage[toml]",
