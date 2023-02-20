@@ -2,7 +2,6 @@
 
 from typing import TYPE_CHECKING, Any, cast
 
-import np.random
 import numpy as np
 from scipy.stats import rv_continuous
 
