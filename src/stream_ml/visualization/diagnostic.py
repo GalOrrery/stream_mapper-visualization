@@ -72,11 +72,10 @@ def _plot_coordinate_component(
     mu = cpars[coord, y].flatten()
     yerr = cpars[coord, y_err].flatten()
 
-    ax.plot(phi1, mu, label=f"{component}")
-    ax.fill_between(phi1, y1=mu + yerr, y2=mu - yerr, facecolor="blue", alpha=0.5)
-    ax.fill_between(
-        phi1, y1=mu + 2 * yerr, y2=mu - 2 * yerr, facecolor="blue", alpha=0.25
-    )
+    p = ax.plot(phi1, mu, label=f"{component}")
+    fc = p[0].get_color()
+    ax.fill_between(phi1, y1=mu + yerr, y2=mu - yerr, facecolor=fc, alpha=0.5)
+    ax.fill_between(phi1, y1=mu + 2 * yerr, y2=mu - 2 * yerr, facecolor=fc, alpha=0.25)
 
     ax_top.plot(phi1, cpars[("weight",)], label=f"{component}[weight]")
 
