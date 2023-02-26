@@ -11,8 +11,6 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import ConnectionPatch
 
 from stream_ml.visualization.defaults import (
-    COL_NAME_DEFAULTS,
-    COORD_TO_YLABEL,
     YLABEL_DEFAULTS,
 )
 from stream_ml.visualization.utils.arg_decorators import make_tuple
@@ -117,7 +115,7 @@ def plot_coordinate_histograms_in_phi1_slices(
     /,
     phi1_edges: tuple[Quantity | NDArray[Any], ...],
     *,
-    coords: tuple[str, ...] = COL_NAME_DEFAULTS,
+    coords: tuple[str, ...],
     ylabels: Mapping[str, str] = YLABEL_DEFAULTS,
     **kwargs: Any,
 ) -> Figure:
@@ -179,7 +177,13 @@ def plot_coordinate_histograms_in_phi1_slices(
     # Phi1-Phi2 top plot
 
     ax0 = fig.add_subplot(gs0[0, :])
-    ax0.scatter(data["phi1"].flatten(), data["phi2"].flatten(), s=1, c="black")
+    ax0.plot(
+        data["phi1"].flatten(),
+        data["phi2"].flatten(),
+        c="black",
+        marker=",",
+        linestyle="none",
+    )
     ax0.set_xlabel(
         r"$\phi_1$" + (rf" [{ax0.get_xlabel()}]" if ax0.get_xlabel() else ""),
         fontsize=15,
@@ -264,7 +268,7 @@ def coord_panels(
 
     for i, c in enumerate(coords):
         ckw = kwargs.pop(c, {})
-        ckw.setdefault("rasterize", True)
+        ckw.setdefault("rasterized", True)
 
         if use_hist:
             ckw.setdefault("density", True)
@@ -275,6 +279,6 @@ def coord_panels(
             axs[i].scatter(data["phi1"].flatten(), data[c].flatten(), **ckw)
 
         axs[i].set_xlabel(r"$\phi_1$")
-        axs[i].set_ylabel(COORD_TO_YLABEL.get(c, c))
+        axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c))
 
     return fig

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast
 import numpy as np
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization.defaults import COORD_TO_YLABEL
+from stream_ml.visualization.defaults import YLABEL_DEFAULTS
 from stream_ml.visualization.utils.arg_decorators import make_tuple
 from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
@@ -90,7 +90,7 @@ def component_likelihood_modelspace(
             data["phi2"].flatten()[sorter],
             c=prob[sorter],
             cmap="turbo",
-            s=10,
+            s=1,
             rasterized=True,
             alpha=alpha,
         )
@@ -176,12 +176,12 @@ def component_likelihood_dataspace(
             np.array(data[c].flatten()[sorter]),
             c=prob[sorter],
             cmap="turbo",
-            s=10,
+            s=1,
             rasterized=True,
             alpha=alpha[sorter],
             **kwargs,
         )
         axs[i].set_xlabel(r"$\phi_1$", fontsize=15)
-        axs[i].set_ylabel(COORD_TO_YLABEL.get(c, c), fontsize=15)
+        axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c), fontsize=15)
 
     return fig
