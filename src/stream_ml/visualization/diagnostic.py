@@ -8,7 +8,7 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
 from stream_ml.core.setup_package import WEIGHT_NAME
-from stream_ml.visualization.defaults import COORD_TO_YLABEL
+from stream_ml.visualization.defaults import YLABEL_DEFAULTS
 from stream_ml.visualization.utils.arg_decorators import make_tuple
 from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
@@ -98,7 +98,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     # Axes
     ax = fig.add_subplot(gsi[1])
     ax.set_xlabel(r"$\phi_1$")
-    ax.set_ylabel(COORD_TO_YLABEL.get(coord, coord))
+    ax.set_ylabel(YLABEL_DEFAULTS.get(coord, coord))
 
     # Plot Weight histogram
     ax_top = fig.add_subplot(gsi[0], sharex=ax)
