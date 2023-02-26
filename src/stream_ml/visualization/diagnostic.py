@@ -114,7 +114,13 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     # Data
-    ax.scatter(data["phi1"].flatten(), data[coord].flatten(), s=0.1)
+    ax.plot(
+        data["phi1"].flatten(),
+        data[coord].flatten(),
+        c="black",
+        marker=",",
+        linestyle="none",
+    )
 
     # Plot components
     for comp in components:

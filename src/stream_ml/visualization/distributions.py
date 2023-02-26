@@ -179,7 +179,13 @@ def plot_coordinate_histograms_in_phi1_slices(
     # Phi1-Phi2 top plot
 
     ax0 = fig.add_subplot(gs0[0, :])
-    ax0.scatter(data["phi1"].flatten(), data["phi2"].flatten(), s=1, c="black")
+    ax0.plot(
+        data["phi1"].flatten(),
+        data["phi2"].flatten(),
+        c="black",
+        marker=",",
+        linestyle="none",
+    )
     ax0.set_xlabel(
         r"$\phi_1$" + (rf" [{ax0.get_xlabel()}]" if ax0.get_xlabel() else ""),
         fontsize=15,

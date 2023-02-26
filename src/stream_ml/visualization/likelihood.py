@@ -90,7 +90,7 @@ def component_likelihood_modelspace(
             data["phi2"].flatten()[sorter],
             c=prob[sorter],
             cmap="turbo",
-            s=10,
+            s=1,
             rasterized=True,
             alpha=alpha,
         )
@@ -176,7 +176,7 @@ def component_likelihood_dataspace(
             np.array(data[c].flatten()[sorter]),
             c=prob[sorter],
             cmap="turbo",
-            s=10,
+            s=1,
             rasterized=True,
             alpha=alpha[sorter],
             **kwargs,
