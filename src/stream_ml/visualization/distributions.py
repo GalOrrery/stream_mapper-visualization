@@ -185,7 +185,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         fontsize=15,
     )
     ax0.set_ylabel(
-        r"$\phi_2$" + (rf" [{ax0.get_ylabel()}]" if ax0.get_xlabel() else ""),
+        r"$\phi_2$" + (rf" [{ax0.get_ylabel()}]" if ax0.get_ylabel() else ""),
         fontsize=15,
     )
 
@@ -263,15 +263,16 @@ def coord_panels(
     fig, axs = plt.subplots(1, len(coords), figsize=(4 * len(coords), 4))
 
     for i, c in enumerate(coords):
+        ckw = kwargs.pop(c, {})
+        ckw.setdefault("rasterize", True)
+
         if use_hist:
-            kwargs.setdefault("density", True)
-            kwargs.setdefault("bins", 100)
-            kwargs.setdefault("rasterized", True)
-            axs[i].hist2d(data["phi1"].flatten(), data[c].flatten(), **kwargs)
+            ckw.setdefault("density", True)
+            ckw.setdefault("bins", 100)
+            axs[i].hist2d(data["phi1"].flatten(), data[c].flatten(), **ckw)
         else:
-            kwargs.setdefault("rasterized", True)
-            kwargs.setdefault("s", 1)
-            axs[i].scatter(data["phi1"].flatten(), data[c].flatten(), **kwargs)
+            ckw.setdefault("s", 1)
+            axs[i].scatter(data["phi1"].flatten(), data[c].flatten(), **ckw)
 
         axs[i].set_xlabel(r"$\phi_1$")
         axs[i].set_ylabel(COORD_TO_YLABEL.get(c, c))
