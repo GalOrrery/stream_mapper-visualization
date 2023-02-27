@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+import matplotlib as mpl
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
@@ -114,13 +115,22 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     # Data
-    ax.plot(
-        data["phi1"].flatten(),
-        data[coord].flatten(),
-        c="black",
-        marker=",",
-        linestyle="none",
-    )
+    if kwargs.get("use_hist", False):
+        ax.hist2d(
+            data["phi1"].flatten(),
+            data[coord].flatten(),
+            bins=kwargs.get("bins", 100),
+            cmap="Greys",
+            norm=mpl.colors.LogNorm(),
+        )
+    else:
+        ax.plot(
+            data["phi1"].flatten(),
+            data[coord].flatten(),
+            c="black",
+            marker=",",
+            linestyle="none",
+        )
 
     # Plot components
     for comp in components:
@@ -184,8 +194,6 @@ def astrometric_model_panels(
         The component(s) to plot.
     coords : tuple[str, ...], keyword-only
         The coordinate(s) to plot.
-    savefig : pathlib.Path or str or None, keyword-only
-        The path to save the figure to.
     **kwargs : Any
         Additional keyword arguments.
 
@@ -201,6 +209,8 @@ def astrometric_model_panels(
            Whether to include the backgground weighgt. `True` by default.
         - include_total_weight : bool, optional
            Whether to include the total weight. `True` by default.
+        - use_hist : bool, optional
+              Whether to use a histogram for the data. `False` by default.
 
     Returns
     -------
