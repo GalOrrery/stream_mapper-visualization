@@ -107,7 +107,6 @@ def _plot_cooordinate_histogram_column(
 
 
 # TODO: Add option for CMD plot
-# TODO: chang "coords" to "coord"
 @add_savefig_option
 @make_tuple("coords")
 def plot_coordinate_histograms_in_phi1_slices(
@@ -116,6 +115,8 @@ def plot_coordinate_histograms_in_phi1_slices(
     phi1_edges: tuple[Quantity | NDArray[Any], ...],
     *,
     coords: tuple[str, ...],
+    xcoord: str = "phi1",
+    ycoord: str = "phi2",
     ylabels: Mapping[str, str] = YLABEL_DEFAULTS,
     **kwargs: Any,
 ) -> Figure:
@@ -128,8 +129,13 @@ def plot_coordinate_histograms_in_phi1_slices(
         and ``phi2``.
     phi1_edges : tuple[Quantity, ...]
         Tuple of phi1 bounds.
-    coords : tuple[str, ...], optional keyword-only
+
+    coords : tuple[str, ...], keyword-only
         Tuple of coordinate names to plot.
+    xcoord : str, optional keyword-only
+        Coordinate to plot on the x-axis. Default is ``"phi1"``.
+    ycoord : str, optional keyword-only
+        Coordinate to plot on the y-axis. Default is ``"phi2"``.
 
     ylabels : dict[str, str], optional keyword-only
         Dictionary of ylabels for the columns, by default:
@@ -178,18 +184,20 @@ def plot_coordinate_histograms_in_phi1_slices(
 
     ax0 = fig.add_subplot(gs0[0, :])
     ax0.plot(
-        data["phi1"].flatten(),
-        data["phi2"].flatten(),
+        data[xcoord].flatten(),
+        data[ycoord].flatten(),
         c="black",
         marker=",",
         linestyle="none",
     )
     ax0.set_xlabel(
-        r"$\phi_1$" + (rf" [{ax0.get_xlabel()}]" if ax0.get_xlabel() else ""),
+        ylabels.get(xcoord, xcoord)
+        + (rf" [{ax0.get_xlabel()}]" if ax0.get_xlabel() else ""),
         fontsize=15,
     )
     ax0.set_ylabel(
-        r"$\phi_2$" + (rf" [{ax0.get_ylabel()}]" if ax0.get_ylabel() else ""),
+        ylabels.get(ycoord, ycoord)
+        + (rf" [{ax0.get_ylabel()}]" if ax0.get_ylabel() else ""),
         fontsize=15,
     )
 
@@ -211,7 +219,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         # Per-coordinate plot
         data_slice = cast(
             "QTable | Data[ArrayLike]",
-            data[(data["phi1"].flatten() >= left) & (data["phi1"].flatten() < right)],
+            data[(data[xcoord].flatten() >= left) & (data[xcoord].flatten() < right)],
         )
 
         _plot_cooordinate_histogram_column(
@@ -241,6 +249,7 @@ def coord_panels(
     data: QTable | Data[ArrayLike],
     /,
     coords: tuple[str, ...],
+    xcoord: str = "phi1",
     *,
     use_hist: bool = False,
     **kwargs: Any,
@@ -252,8 +261,12 @@ def coord_panels(
     data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
         Data with the column names ``coords``. Must have at least ``phi1``
         and ``phi2``.
+
     coords : tuple[str, ...]
         Tuple of coordinate names to plot.
+    xcoord : str, optional
+        Coordinate to plot on the x-axis. Default is ``"phi1"``.
+
     use_hist : bool, optional keyword-only
         Whether to use a histogram or scatter plot, by default `False`.
     **kwargs : Any
@@ -273,12 +286,12 @@ def coord_panels(
         if use_hist:
             ckw.setdefault("density", True)
             ckw.setdefault("bins", 100)
-            axs[i].hist2d(data["phi1"].flatten(), data[c].flatten(), **ckw)
+            axs[i].hist2d(data[xcoord].flatten(), data[c].flatten(), **ckw)
         else:
             ckw.setdefault("s", 1)
-            axs[i].scatter(data["phi1"].flatten(), data[c].flatten(), **ckw)
+            axs[i].scatter(data[xcoord].flatten(), data[c].flatten(), **ckw)
 
-        axs[i].set_xlabel(r"$\phi_1$")
+        axs[i].set_xlabel(YLABEL_DEFAULTS.get(xcoord, xcoord))
         axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c))
 
     return fig
