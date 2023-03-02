@@ -292,7 +292,15 @@ def coord_panels(
             ckw.setdefault("s", 1)
             axs[i].scatter(data[xcoord].flatten(), data[c].flatten(), **ckw)
 
-        axs[i].set_xlabel(YLABEL_DEFAULTS.get(xcoord, xcoord))
-        axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c))
+        # Set labels
+        if hasattr(data[xcoord], "unit"):
+            axs[i].set_xlabel(f"{xcoord} [{axs[i].get_xlabel()}]")
+        else:
+            axs[i].set_xlabel(YLABEL_DEFAULTS.get(xcoord, xcoord))
+
+        if hasattr(data[c], "unit"):
+            axs[i].set_ylabel(f"{YLABEL_DEFAULTS.get(c, c)} [{axs[i].get_ylabel()}]")
+        else:
+            axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c))
 
     return fig
