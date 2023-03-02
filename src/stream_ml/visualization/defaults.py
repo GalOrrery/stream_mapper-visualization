@@ -25,11 +25,11 @@ YLABEL_DEFAULTS = {
     # Custom
     "phi1": r"$\phi_1$",
     "phi2": r"$\phi_2$",
-    "pm_phi1": r"$\mu_{phi_1}$",
-    "pm_phi1_cosphi2": r"$\mu_{phi_1}^*$",
-    "pm_phi1_cosphi2_unrefl": r"$\mu_{phi_1}^*$",
-    "pm_phi1_cosphi2_refl": r"$\mu_{phi_1}^*$",
-    "pm_phi2": r"$\mu_{phi_2}$",
-    "pm_phi2_unrefl": r"$\mu_{phi_2}$",
-    "pm_phi2_refl": r"$\mu_{phi_2}$",
+    "pm_phi1": r"$\mu_{\phi_1}$",
+    "pm_phi1_cosphi2": r"$\mu_{\phi_1}^*$",
+    "pm_phi1_cosphi2_unrefl": r"$\mu_{\phi_1}^*$",
+    "pm_phi1_cosphi2_refl": r"$\mu_{\phi_1}^*$",
+    "pm_phi2": r"$\mu_{\phi_2}$",
+    "pm_phi2_unrefl": r"$\mu_{\phi_2}$",
+    "pm_phi2_refl": r"$\mu_{\phi_2}$",
 }
