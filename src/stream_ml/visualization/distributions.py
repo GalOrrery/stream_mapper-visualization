@@ -189,6 +189,7 @@ def plot_coordinate_histograms_in_phi1_slices(
         c="black",
         marker=",",
         linestyle="none",
+        **kwargs.get("top_kwargs", {}),
     )
     ax0.set_xlabel(
         ylabels.get(xcoord, xcoord)
