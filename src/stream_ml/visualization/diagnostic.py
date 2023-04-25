@@ -8,7 +8,6 @@ import matplotlib as mpl
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
-from stream_ml.core.setup_package import WEIGHT_NAME
 from stream_ml.visualization.defaults import YLABEL_DEFAULTS
 from stream_ml.visualization.utils.arg_decorators import make_tuple
 from stream_ml.visualization.utils.plt_decorators import (
@@ -24,8 +23,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from matplotlib.gridspec import SubplotSpec
 
-    from stream_ml.core import Data
-    from stream_ml.core.api import Model
+    from stream_ml.core import Data, Model
     from stream_ml.core.params import Params
     from stream_ml.core.typing import Array
 
@@ -91,6 +89,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     mpars: Params[Array],
     components: tuple[str, ...],
     model_components: tuple[str, ...],
+    coord2par: dict[str, str],
     kwargs: dict[str, Any],
 ) -> None:
     """Plot a single coordinate for all components."""
@@ -105,14 +104,6 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     ax_top = fig.add_subplot(gsi[0], sharex=ax)
     ax_top.tick_params(axis="x", labelbottom=False)
     ax_top.set_ylabel(r"weight")
-
-    if kwargs.get("include_total_weight", True):
-        ax_top.plot(
-            data["phi1"].flatten(),
-            mpars[(WEIGHT_NAME,)].flatten(),
-            color="gray",
-            label="total weight",
-        )
 
     # Data
     if kwargs.get("use_hist", False):
@@ -138,7 +129,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
             data,
             mpars,
             component=comp,
-            coord=coord,
+            coord=coord2par.get(coord, coord),
             ax=ax,
             ax_top=ax_top,
             y="mu",
@@ -176,6 +167,7 @@ def astrometric_model_panels(
     *,
     components: tuple[str, ...] = ("stream",),
     coords: tuple[str, ...] = ("phi2",),
+    coord2par: dict[str, str] | None = None,
     **kwargs: Any,
 ) -> Figure:
     r"""Diagnostic plot of the model.
@@ -194,6 +186,9 @@ def astrometric_model_panels(
         The component(s) to plot.
     coords : tuple[str, ...], keyword-only
         The coordinate(s) to plot.
+    coord2par : dict[str, str], optional
+        A mapping from coordinate to parameter name. Defaults to the identity
+        mapping.
     **kwargs : Any
         Additional keyword arguments.
 
@@ -233,6 +228,7 @@ def astrometric_model_panels(
             mpars=mpars,
             components=components,
             model_components=model.components,
+            coord2par=coord2par if coord2par is not None else {},
             kwargs=kwargs,
         )
 
