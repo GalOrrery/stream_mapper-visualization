@@ -35,7 +35,7 @@ def _plot_coordinate_component(
     coord: str,
     *,
     ax: Axes,
-    ax_top: Axes,
+    ax_top: Axes | None,
     y: str = "mu",
     y_err: str = "sigma",
 ) -> Axes:
@@ -53,7 +53,7 @@ def _plot_coordinate_component(
         The coordinate to plot.
     ax : Axes, keyword-only
         The axes to plot on.
-    ax_top : Axes, keyword-only
+    ax_top : Axes | None, keyword-only
         The axes to plot the weights on.
     y : str, keyword-only
         The name of the mean parameter.
@@ -76,7 +76,8 @@ def _plot_coordinate_component(
     ax.fill_between(phi1, y1=mu + yerr, y2=mu - yerr, facecolor=fc, alpha=0.5)
     ax.fill_between(phi1, y1=mu + 2 * yerr, y2=mu - 2 * yerr, facecolor=fc, alpha=0.25)
 
-    ax_top.plot(phi1, cpars[("weight",)], label=f"{component}[weight]")
+    if ax_top is not None and "weight" in cpars:
+        ax_top.plot(phi1, cpars[("weight",)], label=f"{component}[weight]")
 
     return ax
 
@@ -150,9 +151,14 @@ def _plot_coordinate_panel(  # noqa: PLR0913
             label="background[weight]",
         )
 
-    # Legend
+    # Bottom plot
     ax.legend(fontsize=kwargs.get("legend_fontsize", plt.rcParams["font.size"]))
-    ax_top.legend(fontsize=kwargs.get("top_legend_fontsize", plt.rcParams["font.size"]))
+
+    # top plot
+    if "weight" in mpars:
+        ax_top.legend(
+            fontsize=kwargs.get("top_legend_fontsize", plt.rcParams["font.size"])
+        )
     ax_top.set_yscale(kwargs.get("top_yscale", "linear"))
 
 
@@ -217,7 +223,7 @@ def astrometric_model_panels(
     fig = plt.figure(constrained_layout=True, figsize=figsize)
 
     # TODO! option to divide into multiple rows
-    gs = gridspec.GridSpec(1, len(coords), figure=fig)  # Main gridspec
+    gs = gridspec.GridSpec(1, len(coords), figure=fig)  # main GridSpec
 
     for i, cn in enumerate(coords):
         _plot_coordinate_panel(
