@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from functools import wraps
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast
 
 import matplotlib as mpl
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization.defaults import YLABEL_DEFAULTS
+from stream_ml.visualization._defaults import YLABEL_DEFAULTS
 from stream_ml.visualization.utils.arg_decorators import make_tuple
 from stream_ml.visualization.utils.plt_decorators import (
     add_savefig_option,
@@ -19,21 +20,67 @@ __all__: list[str] = []
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
-    from matplotlib.gridspec import SubplotSpec
 
     from stream_ml.core import Data, Model
     from stream_ml.core.params import Params
     from stream_ml.core.typing import Array
 
+    P = ParamSpec("P")
+    R = TypeVar("R")
 
+
+def _with_ax_panels(plotting_func: Callable[P, R]) -> Callable[P, R]:
+    @wraps(plotting_func)
+    def with_ax_panels_inner(*args: P.args, **kwargs: P.kwargs) -> R:
+        if "ax" in kwargs and "ax_top" in kwargs:
+            pass
+
+        elif "fig" in kwargs and "gs" in kwargs:
+            coord: str = cast("str", kwargs["coord"])
+            fig: plt.Figure = kwargs.pop("fig")
+            gs: gridspec.GridSpec = kwargs.pop("gs")
+
+            gsi = gs.subgridspec(2, 1, height_ratios=(1, 3))
+
+            # Axes
+            ax = fig.add_subplot(gsi[1])
+            ax.set_xlabel(r"$\phi_1$")
+            ax.set_ylabel(YLABEL_DEFAULTS.get(coord, coord))
+
+            # Plot Weight histogram
+            ax_top = fig.add_subplot(gsi[0], sharex=ax)
+            ax_top.tick_params(axis="x", labelbottom=False)
+            ax_top.set_ylabel(r"weight")
+
+            kwargs["ax"] = ax
+            kwargs["ax_top"] = ax_top
+
+        else:
+            msg = "Must provide either `ax` and `ax_top` or `fig` and `gs`."
+            raise KeyError(msg)
+
+        # Call the plotting function.
+        return plotting_func(*args, **kwargs)
+
+    return with_ax_panels_inner
+
+
+# --------------------------------------------------
+
+
+@_with_ax_panels
 def _plot_coordinate_component(
+    model: Model[Array],
+    /,
     data: Data[Array],
-    pars: Params[Array],
+    mpars: Params[Array],
+    *,
     component: str,
     coord: str,
-    *,
     ax: Axes,
     ax_top: Axes | None,
     y: str = "mu",
@@ -43,9 +90,11 @@ def _plot_coordinate_component(
 
     Parameters
     ----------
+    model : Model[Array]
+        The model to plot.
     data : Data[Array]
         The data to plot.
-    pars : Params
+    mpars : Params
         The parameters to plot.
     component : str
         The component to plot.
@@ -65,46 +114,43 @@ def _plot_coordinate_component(
     Axes
         The axes that were plotted on.
     """
-    cpars = pars.get_prefixed(component)
+    ps = mpars.get_prefixed(component)
 
     phi1 = data["phi1"].flatten()
-    mu = cpars[coord, y].flatten()
-    yerr = cpars[coord, y_err].flatten()
+    mu = ps[coord, y].flatten()
+    yerr = ps[coord, y_err].flatten()
 
-    p = ax.plot(phi1, mu, label=f"{component}")
-    fc = p[0].get_color()
+    im = ax.plot(phi1, mu, label=f"{component}")
+    fc = im[0].get_color()
+
     ax.fill_between(phi1, y1=mu + yerr, y2=mu - yerr, facecolor=fc, alpha=0.5)
     ax.fill_between(phi1, y1=mu + 2 * yerr, y2=mu - 2 * yerr, facecolor=fc, alpha=0.25)
 
-    if ax_top is not None and "weight" in cpars:
-        ax_top.plot(phi1, cpars[("weight",)], label=f"{component}[weight]")
+    if ax_top is not None and "weight" in ps:
+        ax_top.plot(phi1, ps[("weight",)], label=f"{component}[weight]")
 
     return ax
 
 
-def _plot_coordinate_panel(  # noqa: PLR0913
-    fig: Figure,
-    gs: SubplotSpec,
-    coord: str,
+# --------------------------------------------------
+
+
+@_with_ax_panels
+def _plot_coordinate_panel(
+    model: Model[Array],
+    /,
     data: Data[Array],
     mpars: Params[Array],
+    *,
+    coord: str,
     components: tuple[str, ...],
-    model_components: tuple[str, ...],
     coord2par: dict[str, str],
-    kwargs: dict[str, Any],
-) -> None:
+    ax: Axes,
+    ax_top: Axes,
+    **kwargs: Any,
+) -> tuple[Axes, Axes]:
     """Plot a single coordinate for all components."""
-    gsi = gs.subgridspec(2, 1, height_ratios=(1, 3))
-
-    # Axes
-    ax = fig.add_subplot(gsi[1])
-    ax.set_xlabel(r"$\phi_1$")
-    ax.set_ylabel(YLABEL_DEFAULTS.get(coord, coord))
-
-    # Plot Weight histogram
-    ax_top = fig.add_subplot(gsi[0], sharex=ax)
-    ax_top.tick_params(axis="x", labelbottom=False)
-    ax_top.set_ylabel(r"weight")
+    # --- plot ---
 
     # Data
     if kwargs.get("use_hist", False):
@@ -125,8 +171,16 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     # Plot components
+    if "background" in components:
+        i = components.index("background")
+        components = components[:i] + components[i + 1 :]
+        has_background = True
+    else:
+        has_background = False
+
     for comp in components:
         _plot_coordinate_component(
+            model,
             data,
             mpars,
             component=comp,
@@ -138,11 +192,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     # Include background in top plot, if applicable
-    if (
-        "background" not in components
-        and "background" in model_components
-        and kwargs.get("include_background_weight", True)
-    ):
+    if has_background:
         background_weight = ("background.weight",)
         ax_top.plot(
             data["phi1"].flatten(),
@@ -160,6 +210,11 @@ def _plot_coordinate_panel(  # noqa: PLR0913
             fontsize=kwargs.get("top_legend_fontsize", plt.rcParams["font.size"])
         )
     ax_top.set_yscale(kwargs.get("top_yscale", "linear"))
+
+    return ax, ax_top
+
+
+# --------------------------------------------------
 
 
 @add_savefig_option
@@ -206,8 +261,6 @@ def astrometric_model_panels(
            Uses ``plt.rcParams["legend.fontsize"]`` by default.
         - top_yscale : str, optional
            Uses ``"linear"`` by default.
-        - include_background_weight : bool, optional
-           Whether to include the backgground weighgt. `True` by default.
         - include_total_weight : bool, optional
            Whether to include the total weight. `True` by default.
         - use_hist : bool, optional
@@ -218,6 +271,10 @@ def astrometric_model_panels(
     Figure
         The figure that was plotted.
     """
+    if "coord" in kwargs:
+        msg = "Use `coords` instead of `coord`."
+        raise ValueError(msg)
+
     # Now figure out how many rows and columns we need
     figsize = kwargs.pop("figsize", plt.rcParams["figure.figsize"])
     fig = plt.figure(constrained_layout=True, figsize=figsize)
@@ -226,16 +283,16 @@ def astrometric_model_panels(
     gs = gridspec.GridSpec(1, len(coords), figure=fig)  # main GridSpec
 
     for i, cn in enumerate(coords):
-        _plot_coordinate_panel(
+        _ = _plot_coordinate_panel(
+            model,
             fig=fig,
             gs=gs[i],
             coord=cn,
             data=data,
             mpars=mpars,
             components=components,
-            model_components=model.components,
             coord2par=coord2par if coord2par is not None else {},
-            kwargs=kwargs,
+            **kwargs,
         )
 
     return fig

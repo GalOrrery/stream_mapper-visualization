@@ -10,7 +10,7 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 from matplotlib.patches import ConnectionPatch
 
-from stream_ml.visualization.defaults import (
+from stream_ml.visualization._defaults import (
     YLABEL_DEFAULTS,
 )
 from stream_ml.visualization.utils.arg_decorators import make_tuple
