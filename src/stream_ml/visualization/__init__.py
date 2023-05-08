@@ -2,17 +2,13 @@
 
 from astropy.visualization import quantity_support
 
-from stream_ml.visualization.defaults import YLABEL_DEFAULTS
-from stream_ml.visualization.diagnostic import astrometric_model_panels
-from stream_ml.visualization.distributions import (
+from stream_ml.visualization._defaults import YLABEL_DEFAULTS
+from stream_ml.visualization._diagnostic import astrometric_model_panels
+from stream_ml.visualization._distributions import (
     coord_panels,
     plot_coordinate_histograms_in_phi1_slices,
 )
-from stream_ml.visualization.likelihood import (
-    component_likelihood_dataspace,
-    component_likelihood_modelspace,
-)
-from stream_ml.visualization.parameter import parameter, weight
+from stream_ml.visualization._parameter import parameter, weight
 
 __all__ = [
     # Constants
@@ -24,7 +20,6 @@ __all__ = [
     "astrometric_model_panels",
     # Likelihood
     "component_likelihood_dataspace",
-    "component_likelihood_modelspace",
     # Parameter
     "weight",
     "parameter",
