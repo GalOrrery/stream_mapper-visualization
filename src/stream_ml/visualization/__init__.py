@@ -8,6 +8,7 @@ from stream_ml.visualization._distributions import (
     coord_panels,
     plot_coordinate_histograms_in_phi1_slices,
 )
+from stream_ml.visualization._likelihood import component_likelihood
 from stream_ml.visualization._parameter import parameter, weight
 
 __all__ = [
@@ -19,7 +20,7 @@ __all__ = [
     # Diagnostic
     "astrometric_model_panels",
     # Likelihood
-    "component_likelihood_dataspace",
+    "component_likelihood",
     # Parameter
     "weight",
     "parameter",
