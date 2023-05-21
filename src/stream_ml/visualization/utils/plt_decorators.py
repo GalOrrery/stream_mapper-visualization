@@ -58,7 +58,7 @@ def add_savefig_option(plotting_func: Callable[P, ForA]) -> Callable[P, ForA]:
         """
         # Get the savefig keyword argument.
         savefig = kwargs.pop("savefig", None)
-        if not isinstance(savefig, (type(None), str, os.PathLike, pathlib.Path)):
+        if not isinstance(savefig, type(None) | str | os.PathLike | pathlib.Path):
             msg = f"savefig must be a pathlib.Path object, not {type(savefig)}."
             raise TypeError(msg)
 

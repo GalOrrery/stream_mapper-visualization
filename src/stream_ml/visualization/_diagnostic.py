@@ -73,7 +73,7 @@ def _with_ax_panels(plotting_func: Callable[P, R]) -> Callable[P, R]:
 
 
 @_with_ax_panels
-def _plot_coordinate_component(
+def _plot_coordinate_component(  # noqa: PLR0913
     model: Model[Array],
     /,
     data: Data[Array],
@@ -136,7 +136,7 @@ def _plot_coordinate_component(
 
 
 @_with_ax_panels
-def _plot_coordinate_panel(
+def _plot_coordinate_panel(  # noqa: PLR0913
     model: Model[Array],
     /,
     data: Data[Array],
@@ -220,7 +220,7 @@ def _plot_coordinate_panel(
 @add_savefig_option
 @with_tight_layout
 @make_tuple("components", "coords")
-def astrometric_model_panels(
+def astrometric_model_panels(  # noqa: PLR0913
     model: Model[Array],
     /,
     data: Data[Array],
