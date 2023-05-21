@@ -109,7 +109,7 @@ def _plot_cooordinate_histogram_column(
 # TODO: Add option for CMD plot
 @add_savefig_option
 @make_tuple("coords")
-def plot_coordinate_histograms_in_phi1_slices(
+def plot_coordinate_histograms_in_phi1_slices(  # noqa: PLR0913
     data: QTable | Data[ArrayLike],
     /,
     phi1_edges: tuple[Quantity | NDArray[Any], ...],

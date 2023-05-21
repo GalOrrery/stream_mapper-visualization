@@ -58,7 +58,7 @@ def weight(
 @with_sorter
 @with_ax
 @make_tuple("components", "coords")
-def parameter(
+def parameter(  # noqa: PLR0913
     data: Data[Array],
     mpars: Params[Array],
     components: tuple[str, ...] = ("stream",),

@@ -170,6 +170,9 @@ ignore = [
   # flake8-self (SLF)
   "SLF001",
 
+  # flake8-todos (TD)  # TODO: fix
+  "TD",
+
   # flake8-commas (COM)
   "COM812",  # TrailingCommaMissing
   "COM818",  # TrailingCommaOnBareTupleProhibited
