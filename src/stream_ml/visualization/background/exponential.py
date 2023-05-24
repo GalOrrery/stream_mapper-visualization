@@ -66,7 +66,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
     ) -> NDArray[floating[Any]]:
         # Mathematically this is correct, but as m approaches 0, the pdf becomes
         # indeterminate.
-        if self.m > self.small_m_approx_threshold:
+        if np.abs(self.m) > self.small_m_approx_threshold:
             out = (-self.m * np.exp(-self.m * (x - self.a))) / (
                 np.expm1(-self.m * (self.b - self.a))
             )
@@ -93,7 +93,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
         m: np.float64 = self.m
         # Mathematically this is correct, but as m approaches 0, the cdf becomes
         # indeterminate.
-        if self.m > self.small_m_approx_threshold:
+        if np.abs(self.m) > self.small_m_approx_threshold:
             out = (np.exp(m * (a - x) - 1)) / (np.exp(m * (a - b)) - 1)
 
         # Instead, we use the order-3 Taylor expansion of the pdf around m=0.
@@ -113,7 +113,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
         a, b, m = self.a, self.b, self.m
         # Mathematically this is correct, but as m approaches 0, the ppf becomes
         # indeterminate.
-        if self.m > self.small_m_approx_threshold:
+        if np.abs(self.m) > self.small_m_approx_threshold:
             out = a - np.log(1 + q * (np.exp(-m * (b - a)) - 1)) / m
 
         # Instead, we use the order-3 Taylor expansion around m=0.
