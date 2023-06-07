@@ -3,8 +3,9 @@
 
 __all__: list[str] = []
 
+from types import MappingProxyType
 
-YLABEL_DEFAULTS = {
+_LABEL_DEFAULTS: dict[str, str] = {
     # ICRS - RA
     "ra": r"$\alpha$",
     # ICRS - Dec
@@ -33,3 +34,4 @@ YLABEL_DEFAULTS = {
     "pm_phi2_unrefl": r"$\mu_{\phi_2}$",
     "pm_phi2_refl": r"$\mu_{\phi_2}$",
 }
+LABEL_DEFAULTS = MappingProxyType(_LABEL_DEFAULTS)

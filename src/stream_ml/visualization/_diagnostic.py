@@ -9,9 +9,9 @@ import matplotlib as mpl
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization._defaults import YLABEL_DEFAULTS
-from stream_ml.visualization.utils.arg_decorators import make_tuple
-from stream_ml.visualization.utils.plt_decorators import (
+from stream_ml.visualization._defaults import LABEL_DEFAULTS
+from stream_ml.visualization._utils.arg_decorators import make_tuple
+from stream_ml.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -49,7 +49,7 @@ def _with_ax_panels(plotting_func: Callable[P, R]) -> Callable[P, R]:
             # Axes
             ax = fig.add_subplot(gsi[1])
             ax.set_xlabel(r"$\phi_1$")
-            ax.set_ylabel(YLABEL_DEFAULTS.get(coord, coord))
+            ax.set_ylabel(LABEL_DEFAULTS.get(coord, coord))
 
             # Plot Weight histogram
             ax_top = fig.add_subplot(gsi[0], sharex=ax)
@@ -142,6 +142,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     data: Data[Array],
     mpars: Params[Array],
     *,
+    indep_coord: str,
     coord: str,
     components: tuple[str, ...],
     coord2par: dict[str, str],
@@ -154,21 +155,17 @@ def _plot_coordinate_panel(  # noqa: PLR0913
 
     # Data
     if kwargs.get("use_hist", False):
-        ax.hist2d(
-            data["phi1"].flatten(),
-            data[coord].flatten(),
-            bins=kwargs.get("bins", 100),
-            cmap="Greys",
-            norm=mpl.colors.LogNorm(),
-        )
+        func = ax.hist2d
+        pkw = {
+            "bins": kwargs.get("bins", 100),
+            "cmap": "Greys",
+            "norm": mpl.colors.LogNorm(),
+        }
     else:
-        ax.plot(
-            data["phi1"].flatten(),
-            data[coord].flatten(),
-            c="black",
-            marker=",",
-            linestyle="none",
-        )
+        func = ax.plot
+        pkw = {"c": "black", "marker": ",", "linestyle": "none"}
+
+    func(data[indep_coord].flatten(), data[coord].flatten(), **pkw)
 
     # Plot components
     if "background" in components:
@@ -177,6 +174,16 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         has_background = True
     else:
         has_background = False
+
+    # Include background in top plot, if applicable
+    if has_background:
+        background_weight = ("background.weight",)
+        ax_top.plot(
+            data[indep_coord].flatten(),
+            mpars[background_weight].flatten(),
+            color="black",
+            label="background[weight]",
+        )
 
     for comp in components:
         _plot_coordinate_component(
@@ -189,16 +196,6 @@ def _plot_coordinate_panel(  # noqa: PLR0913
             ax_top=ax_top,
             y="mu",
             y_err="sigma",
-        )
-
-    # Include background in top plot, if applicable
-    if has_background:
-        background_weight = ("background.weight",)
-        ax_top.plot(
-            data["phi1"].flatten(),
-            mpars[background_weight].flatten(),
-            color="black",
-            label="background[weight]",
         )
 
     # Bottom plot
@@ -261,8 +258,6 @@ def astrometric_model_panels(  # noqa: PLR0913
            Uses ``plt.rcParams["legend.fontsize"]`` by default.
         - top_yscale : str, optional
            Uses ``"linear"`` by default.
-        - include_total_weight : bool, optional
-           Whether to include the total weight. `True` by default.
         - use_hist : bool, optional
               Whether to use a histogram for the data. `False` by default.
 
@@ -287,6 +282,7 @@ def astrometric_model_panels(  # noqa: PLR0913
             model,
             fig=fig,
             gs=gs[i],
+            indep_coord="phi1",
             coord=cn,
             data=data,
             mpars=mpars,

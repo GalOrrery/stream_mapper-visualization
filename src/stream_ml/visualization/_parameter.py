@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from stream_ml.core.setup_package import WEIGHT_NAME
-from stream_ml.visualization.utils.arg_decorators import make_tuple, with_sorter
-from stream_ml.visualization.utils.plt_decorators import (
+from stream_ml.visualization._utils.arg_decorators import make_tuple, with_sorter
+from stream_ml.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_ax,
 )
