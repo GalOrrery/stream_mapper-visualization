@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Any, cast
 import numpy as np
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization._defaults import YLABEL_DEFAULTS
-from stream_ml.visualization.utils.arg_decorators import make_tuple
-from stream_ml.visualization.utils.plt_decorators import (
+from stream_ml.visualization._defaults import LABEL_DEFAULTS
+from stream_ml.visualization._utils.arg_decorators import make_tuple
+from stream_ml.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -84,6 +84,6 @@ def component_likelihood(
             **kwargs,
         )
         axs[i].set_xlabel(r"$\phi_1$", fontsize=15)
-        axs[i].set_ylabel(YLABEL_DEFAULTS.get(c, c), fontsize=15)
+        axs[i].set_ylabel(LABEL_DEFAULTS.get(c, c), fontsize=15)
 
     return fig
