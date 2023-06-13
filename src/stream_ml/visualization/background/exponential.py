@@ -117,7 +117,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
             out = a - np.log(1 + q * (np.exp(-m * (b - a)) - 1)) / m
 
         # Instead, we use the order-3 Taylor expansion around m=0.
-        # FIXME! this does not converge to the correct answer!
+        # TODO! this does not converge to the correct answer!
         else:
             out = np.array(
                 a
