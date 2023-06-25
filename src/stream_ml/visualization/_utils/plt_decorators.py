@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+__all__: list[str] = []
+
 import os
 import pathlib
 import warnings
@@ -10,8 +12,6 @@ from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-
-__all__: list[str] = []
 
 if TYPE_CHECKING:
     from collections.abc import Callable
