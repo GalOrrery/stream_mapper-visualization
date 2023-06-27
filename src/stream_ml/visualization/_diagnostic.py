@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+__all__: list[str] = []
+
 from functools import wraps
 from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast
 
 import matplotlib as mpl
+import numpy as np
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
@@ -15,9 +18,6 @@ from stream_ml.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
-
-__all__: list[str] = []
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -84,7 +84,7 @@ def _plot_coordinate_component(  # noqa: PLR0913
     ax: Axes,
     ax_top: Axes | None,
     y: str = "mu",
-    y_err: str = "sigma",
+    y_err: str = "ln-sigma",
 ) -> Axes:
     """Plot a single coordinate for a single component.
 
@@ -118,7 +118,7 @@ def _plot_coordinate_component(  # noqa: PLR0913
 
     phi1 = data["phi1"].flatten()
     mu = ps[coord, y].flatten()
-    yerr = ps[coord, y_err].flatten()
+    yerr = np.exp(ps[coord, y_err].flatten())
 
     im = ax.plot(phi1, mu, label=f"{component}")
     fc = im[0].get_color()
@@ -195,7 +195,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
             ax=ax,
             ax_top=ax_top,
             y="mu",
-            y_err="sigma",
+            y_err="ln-sigma",
         )
 
     # Bottom plot

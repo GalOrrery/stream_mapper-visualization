@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+__all__: list[str] = []
+
 import inspect
 from functools import wraps
 from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 import numpy as np
-
-__all__: list[str] = []
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+__all__: list[str] = []
+
 from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
@@ -13,9 +15,6 @@ from stream_ml.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
-
-__all__: list[str] = []
-
 
 if TYPE_CHECKING:
     from astropy.table import QTable
