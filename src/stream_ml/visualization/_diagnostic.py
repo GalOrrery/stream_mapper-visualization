@@ -81,6 +81,8 @@ def _plot_coordinate_component(  # noqa: PLR0913
     *,
     component: str,
     coord: str,
+    log_weight: bool = False,
+    where: Array | None = None,
     ax: Axes,
     ax_top: Axes | None,
     y: str = "mu",
@@ -96,10 +98,16 @@ def _plot_coordinate_component(  # noqa: PLR0913
         The data to plot.
     mpars : Params
         The parameters to plot.
-    component : str
+    component : str, keyword-only
         The component to plot.
-    coord : str
+    coord : str, keyword-only
         The coordinate to plot.
+
+    log_weight : bool, keyword-only
+        Whether to plot the log of the weights.
+    where : Array | None, keyword-only
+        The indices to plot.
+
     ax : Axes, keyword-only
         The axes to plot on.
     ax_top : Axes | None, keyword-only
@@ -107,7 +115,7 @@ def _plot_coordinate_component(  # noqa: PLR0913
     y : str, keyword-only
         The name of the mean parameter.
     y_err : str, keyword-only
-        The name of the standard deviation parameter.
+        The name of the log-standard deviation parameter.
 
     Returns
     -------
@@ -120,14 +128,32 @@ def _plot_coordinate_component(  # noqa: PLR0913
     mu = ps[coord, y].flatten()
     yerr = np.exp(ps[coord, y_err].flatten())
 
-    im = ax.plot(phi1, mu, label=f"{component}")
+    im = ax.plot(phi1[where], mu[where], label=f"{component}", lw=1)
     fc = im[0].get_color()
 
-    ax.fill_between(phi1, y1=mu + yerr, y2=mu - yerr, facecolor=fc, alpha=0.5)
-    ax.fill_between(phi1, y1=mu + 2 * yerr, y2=mu - 2 * yerr, facecolor=fc, alpha=0.25)
+    ax.fill_between(
+        phi1,
+        y1=mu + 2 * yerr,
+        y2=mu - 2 * yerr,
+        facecolor=fc,
+        alpha=0.25,
+        where=where,
+    )
+    ax.fill_between(
+        phi1,
+        y1=mu + yerr,
+        y2=mu - yerr,
+        facecolor=fc,
+        alpha=0.5,
+        where=where,
+    )
 
     if ax_top is not None and "weight" in ps:
-        ax_top.plot(phi1, ps[("weight",)], label=f"{component}[weight]")
+        ax_top.plot(
+            phi1,
+            np.log(ps[("weight",)]) if log_weight else ps[("weight",)],
+            label=f"{component}[weight]",
+        )
 
     return ax
 
@@ -148,12 +174,13 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     coord2par: dict[str, str],
     ax: Axes,
     ax_top: Axes,
+    log_weight: bool = False,
+    min_weight: float = 1e-4,
     **kwargs: Any,
 ) -> tuple[Axes, Axes]:
     """Plot a single coordinate for all components."""
-    # --- plot ---
+    # --- plot data ---
 
-    # Data
     if kwargs.get("use_hist", False):
         func = ax.hist2d
         pkw = {
@@ -167,7 +194,9 @@ def _plot_coordinate_panel(  # noqa: PLR0913
 
     func(data[indep_coord].flatten(), data[coord].flatten(), **pkw)
 
-    # Plot components
+    # --- plot components ---
+
+    # Skip the background component, plotting it first
     if "background" in components:
         i = components.index("background")
         components = components[:i] + components[i + 1 :]
@@ -180,18 +209,24 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         background_weight = ("background.weight",)
         ax_top.plot(
             data[indep_coord].flatten(),
-            mpars[background_weight].flatten(),
+            np.log(mpars[background_weight].flatten())
+            if log_weight
+            else mpars[background_weight].flatten(),
             color="black",
             label="background[weight]",
         )
 
     for comp in components:
+        weight = mpars.get(f"{comp}.weight")
+
         _plot_coordinate_component(
             model,
             data,
             mpars,
             component=comp,
             coord=coord2par.get(coord, coord),
+            log_weight=log_weight,
+            where=(weight >= min_weight) if weight is not None else None,
             ax=ax,
             ax_top=ax_top,
             y="mu",
@@ -259,7 +294,11 @@ def astrometric_model_panels(  # noqa: PLR0913
         - top_yscale : str, optional
            Uses ``"linear"`` by default.
         - use_hist : bool, optional
-              Whether to use a histogram for the data. `False` by default.
+            Whether to use a histogram for the data. `False` by default.
+        - log_weight : bool, optional
+            Whether to plot the log of the weights. `False` by default.
+        - min_weight : float, optional
+            The minimum weight to plot. `1e-4` by default.
 
     Returns
     -------
