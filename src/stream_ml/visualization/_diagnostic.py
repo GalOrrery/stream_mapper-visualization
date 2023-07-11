@@ -12,6 +12,7 @@ import numpy as np
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
+from stream_ml.core.setup_package import BACKGROUND_KEY
 from stream_ml.visualization._defaults import LABEL_DEFAULTS
 from stream_ml.visualization._utils.arg_decorators import make_tuple
 from stream_ml.visualization._utils.plt_decorators import (
@@ -197,8 +198,8 @@ def _plot_coordinate_panel(  # noqa: PLR0913
     # --- plot components ---
 
     # Skip the background component, plotting it first
-    if "background" in components:
-        i = components.index("background")
+    if BACKGROUND_KEY in components:
+        i = components.index(BACKGROUND_KEY)
         components = components[:i] + components[i + 1 :]
         has_background = True
     else:
@@ -206,7 +207,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
 
     # Include background in top plot, if applicable
     if has_background:
-        background_weight = ("background.weight",)
+        background_weight = (f"{BACKGROUND_KEY}.weight",)
         ax_top.plot(
             data[indep_coord].flatten(),
             np.log(mpars[background_weight].flatten())
