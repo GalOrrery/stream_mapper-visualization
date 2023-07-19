@@ -63,6 +63,7 @@ def component_likelihood(
     sorter = np.argsort(prob.flatten())
     alpha = np.copy(prob)
     alpha[alpha < alpha_min] = alpha_min
+    alpha[alpha >= 1] = 1 - 1e-6  # prevent alpha leakage
 
     # Make figure, the figsize is a bit of a hack
     fig, axs = plt.subplots(len(coords), 1, figsize=(8, 2.5 * len(coords)))

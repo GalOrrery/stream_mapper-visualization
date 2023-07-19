@@ -53,7 +53,6 @@ class sloped_distribution(rv_continuous):  # noqa: N801
             name=None,
             longname=None,
             shapes=None,
-            extradoc=None,
             seed=seed,
         )
 
