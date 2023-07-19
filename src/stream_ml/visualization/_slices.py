@@ -184,7 +184,7 @@ def plot_coordinates_in_slices(  # noqa: PLR0913
             ax.set_axisbelow(True)  # grid lines behind data
 
         # Connect coordinate plots to top plot
-        _connect_slices_to_top(fig, ax0, axes[0, col], left=left, right=right)
+        connect_slices_to_top(fig, ax0, axes[0, col], left=left, right=right)
 
     # Adjust y-axis labels for all but the first column
     for row, col in itertools.product(range(len(coords)), range(1, len(x_edges) - 1)):
@@ -260,41 +260,50 @@ def _make_fig_and_axes(
     return fig, ax_top, axes
 
 
-def _connect_slices_to_top(
+def connect_slices_to_top(  # noqa: PLR0913
     fig: Figure,
-    axes1: Axes,
+    axes1: Axes | tuple[Axes, ...],
     axes2: Axes,
     left: Quantity | NDArray[Any],
     right: Quantity | NDArray[Any],
+    color: str = "tab:red",
 ) -> None:
     """Connect column of axes to top plot with lines."""
-    # Add edges to top plot
-    axes1.axvline(left, color="tab:red", ls="--")
-    axes1.axvline(right, color="tab:red", ls="--")
+    if isinstance(axes1, tuple):
+        axes1s = axes1[:-1]
+        axes1e = axes1[-1]
+    else:
+        axes1s = (axes1,)
+        axes1e = axes1
 
-    # Add connection
+    # Add edges to top plot(s)
+    for ax in axes1s:
+        ax.axvline(left, color=color, ls="--", zorder=-200)
+        ax.axvline(right, color=color, ls="--", zorder=-200)
+
+    # Add connections to last top plot
     con = ConnectionPatch(
-        xyA=(np.array(left), axes1.get_ylim()[0]),
+        xyA=(np.array(left), axes1e.get_ylim()[0]),
         xyB=(0, 1),
         coordsA="data",
         coordsB="axes fraction",
-        axesA=axes1,
+        axesA=axes1e,
         axesB=axes2,
-        color="tab:red",
+        color=color,
         ls="--",
         zorder=-200,
     )
-    axes1.add_artist(con)
+    axes1e.add_artist(con)
 
     con = ConnectionPatch(
-        xyA=(np.array(right), axes1.get_ylim()[0]),
+        xyA=(np.array(right), axes1e.get_ylim()[0]),
         xyB=(1, 1),
         coordsA="data",
         coordsB="axes fraction",
-        axesA=axes1,
+        axesA=axes1e,
         axesB=axes2,
-        color="tab:red",
+        color=color,
         ls="--",
         zorder=-200,
     )
-    axes1.add_artist(con)
+    axes1e.add_artist(con)
