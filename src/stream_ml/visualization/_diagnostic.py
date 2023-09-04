@@ -235,6 +235,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     # Bottom plot
+    ax.set_ylim(data[coord].min(), data[coord].max())
     ax.legend(fontsize=kwargs.get("legend_fontsize", plt.rcParams["font.size"]))
 
     # top plot
