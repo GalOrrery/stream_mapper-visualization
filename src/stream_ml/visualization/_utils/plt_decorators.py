@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 import os
 import pathlib
@@ -41,7 +41,7 @@ def add_savefig_option(plotting_func: Callable[P, ForA]) -> Callable[P, ForA]:
     """
 
     @wraps(plotting_func)
-    def add_savefig_option_inner(*args: P.args, **kwargs: P.kwargs) -> ForA:
+    def add_savefig_optiodataner(*args: P.args, **kwargs: P.kwargs) -> ForA:
         """Save the figure to a file.
 
         Parameters
@@ -72,7 +72,7 @@ def add_savefig_option(plotting_func: Callable[P, ForA]) -> Callable[P, ForA]:
 
         return fig_or_ax
 
-    return add_savefig_option_inner
+    return add_savefig_optiodataner
 
 
 def with_tight_layout(plotting_func: Callable[P, Figure]) -> Callable[P, Figure]:

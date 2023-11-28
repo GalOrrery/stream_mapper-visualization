@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 from typing import TYPE_CHECKING, Any
 
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization._defaults import LABEL_DEFAULTS
-from stream_ml.visualization._utils.arg_decorators import make_tuple
-from stream_ml.visualization._utils.plt_decorators import (
+from stream_mapper.visualization._defaults import LABEL_DEFAULTS
+from stream_mapper.visualization._utils.arg_decorators import make_tuple
+from stream_mapper.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from streaam_ml.core.data import Data
 
-    from stream_ml.core.typing import ArrayLike
+    from stream_mapper.core.typing import ArrayLike
 
 
 @add_savefig_option
@@ -39,7 +39,7 @@ def coord_panels(
 
     Parameters
     ----------
-    data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
+    data : `~astropy.table.QTable` or `~stream_mapper.core.data.Data`
         Data with the column names ``coords``. Must have at least ``phi1``
         and ``phi2``.
 

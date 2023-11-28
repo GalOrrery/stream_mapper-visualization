@@ -2,14 +2,14 @@
 
 from astropy.visualization import quantity_support
 
-from stream_ml.visualization._defaults import LABEL_DEFAULTS
-from stream_ml.visualization._diagnostic import astrometric_model_panels
-from stream_ml.visualization._distribution import coord_panels
-from stream_ml.visualization._likelihood import component_likelihood
-from stream_ml.visualization._parameter import parameter, weight
-from stream_ml.visualization._slices import plot_coordinates_in_slices
+from stream_mapper.visualization._defaults import LABEL_DEFAULTS
+from stream_mapper.visualization._diagnostic import astrometric_model_panels
+from stream_mapper.visualization._distribution import coord_panels
+from stream_mapper.visualization._likelihood import component_likelihood
+from stream_mapper.visualization._parameter import parameter, weight
+from stream_mapper.visualization._slices import plot_coordinates_in_slices
 
-__all__ = [
+__all__ = (
     # Constants
     "LABEL_DEFAULTS",
     # Pre
@@ -22,7 +22,7 @@ __all__ = [
     # Parameter
     "weight",
     "parameter",
-]
+)
 
 
 quantity_support()

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 import itertools
 import re
@@ -14,10 +14,10 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 from matplotlib.patches import ConnectionPatch
 
-from stream_ml.visualization._defaults import LABEL_DEFAULTS
-from stream_ml.visualization._utils.arg_decorators import make_tuple
-from stream_ml.visualization._utils.labels import set_label
-from stream_ml.visualization._utils.plt_decorators import (
+from stream_mapper.visualization._defaults import LABEL_DEFAULTS
+from stream_mapper.visualization._utils.arg_decorators import make_tuple
+from stream_mapper.visualization._utils.labels import set_label
+from stream_mapper.visualization._utils.plt_decorators import (
     add_savefig_option,
 )
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from numpy.typing import NDArray
     from streaam_ml.core.data import Data
 
-    from stream_ml.core.typing import ArrayLike
+    from stream_mapper.core.typing import ArrayLike
 
 
 CoordT = str | tuple[str, str]  # hist vs plot
@@ -61,7 +61,7 @@ def plot_coordinates_in_slices(  # noqa: PLR0913
 
     Parameters
     ----------
-    data : `~astropy.table.QTable` or `~stream_ml.core.data.Data`
+    data : `~astropy.table.QTable` or `~stream_mapper.core.data.Data`
         Data with the column names ``coords``. Must have at least ``phi1`` and
         ``phi2``.
     x_edges : tuple[Quantity, ...]

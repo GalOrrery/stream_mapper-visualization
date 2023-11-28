@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 from typing import TYPE_CHECKING, Any
 
-from stream_ml.core.setup_package import WEIGHT_NAME
-from stream_ml.visualization._utils.arg_decorators import make_tuple, with_sorter
-from stream_ml.visualization._utils.plt_decorators import (
+from stream_mapper.core.setup_package import WEIGHT_NAME
+from stream_mapper.visualization._utils.arg_decorators import make_tuple, with_sorter
+from stream_mapper.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_ax,
 )
@@ -18,9 +18,8 @@ if TYPE_CHECKING:
     from numpy import integer
     from numpy.typing import NDArray
 
-    from stream_ml.core import Data
-    from stream_ml.core.params import Params
-    from stream_ml.core.typing import Array
+    from stream_mapper.core import Data, Params
+    from stream_mapper.core.typing import Array
 
 
 @add_savefig_option

@@ -1,5 +1,5 @@
 [project]
-  name = "stream_ml.visualization"
+  name = "stream_mapper.visualization"
   version = "0.1.0"
   description = "Stream ML."
   readme = "README.rst"
@@ -26,7 +26,7 @@
     "matplotlib>=3.4",
     "numpy>=1.21",
     "numexpr>=2.7",
-    "stream_ml.core",
+    "stream_mapper.core",
   ]
 
 [project.optional-dependencies]
@@ -51,9 +51,9 @@
   ]
 
 [project.urls]
-  homepage = "https://github.com/nstarman/stream_ml-visualization"
-  repository = "https://github.com/nstarman/stream_ml-visualization"
-  documentation = "https://github.com/nstarman/stream_ml-visualization"
+  homepage = "https://github.com/nstarman/stream_mapper-visualization"
+  repository = "https://github.com/nstarman/stream_mapper-visualization"
+  documentation = "https://github.com/nstarman/stream_mapper-visualization"
 
 
 [build-system]
@@ -187,5 +187,5 @@ ignore = [
 "tests/*.py" = ["ANN", "S101"]
 
 [tool.ruff.isort]
-known-first-party = ["stream_ml"]
+known-first-party = ["stream_mapper"]
 known-third-party = ["astropy", "matplotlib", "numpy", "pytest"]
