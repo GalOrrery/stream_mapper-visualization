@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 from matplotlib import pyplot as plt
 
-from stream_ml.visualization._defaults import LABEL_DEFAULTS
-from stream_ml.visualization._utils.arg_decorators import make_tuple
-from stream_ml.visualization._utils.plt_decorators import (
+from stream_mapper.visualization._defaults import LABEL_DEFAULTS
+from stream_mapper.visualization._utils.arg_decorators import make_tuple
+from stream_mapper.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
     from numpy.typing import NDArray
 
-    from stream_ml.core import Data
-    from stream_ml.core.typing import ArrayLike
+    from stream_mapper.core import Data
+    from stream_mapper.core.typing import ArrayLike
 
 
 @add_savefig_option

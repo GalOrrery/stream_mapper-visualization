@@ -1,7 +1,7 @@
 """Core library for stream membership likelihood, with ML."""
 
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 from types import MappingProxyType
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+__all__: tuple[str, ...] = ()
 
 from functools import wraps
 from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast
@@ -12,10 +12,11 @@ import numpy as np
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
-from stream_ml.core.setup_package import BACKGROUND_KEY
-from stream_ml.visualization._defaults import LABEL_DEFAULTS
-from stream_ml.visualization._utils.arg_decorators import make_tuple
-from stream_ml.visualization._utils.plt_decorators import (
+from stream_mapper.core import WEIGHT_NAME
+from stream_mapper.core.setup_package import BACKGROUND_KEY
+from stream_mapper.visualization._defaults import LABEL_DEFAULTS
+from stream_mapper.visualization._utils.arg_decorators import make_tuple
+from stream_mapper.visualization._utils.plt_decorators import (
     add_savefig_option,
     with_tight_layout,
 )
@@ -26,9 +27,8 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
-    from stream_ml.core import Data, Model
-    from stream_ml.core.params import Params
-    from stream_ml.core.typing import Array
+    from stream_mapper.core import Data, Model, Params
+    from stream_mapper.core.typing import Array
 
     P = ParamSpec("P")
     R = TypeVar("R")
@@ -207,7 +207,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
 
     # Include background in top plot, if applicable
     if has_background:
-        background_weight = (f"{BACKGROUND_KEY}.weight",)
+        background_weight = (f"{BACKGROUND_KEY}.{WEIGHT_NAME}",)
         ax_top.plot(
             data[indep_coord].flatten(),
             np.log(mpars[background_weight].flatten())
@@ -218,7 +218,7 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         )
 
     for comp in components:
-        weight = mpars.get(f"{comp}.weight")
+        weight = mpars.get(f"{comp}.{WEIGHT_NAME}")
 
         _plot_coordinate_component(
             model,
