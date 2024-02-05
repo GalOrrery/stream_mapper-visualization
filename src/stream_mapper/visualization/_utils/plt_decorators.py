@@ -38,6 +38,7 @@ def add_savefig_option(plotting_func: Callable[P, ForA]) -> Callable[P, ForA]:
     -------
     Callable[ParamSpec, Figure | Axes]
         The plotting function with a savefig method.
+
     """
 
     @wraps(plotting_func)
@@ -55,6 +56,7 @@ def add_savefig_option(plotting_func: Callable[P, ForA]) -> Callable[P, ForA]:
         -------
         `~matplotlib.figure.Figure`
             The figure that was plotted.
+
         """
         # Get the savefig keyword argument.
         savefig = kwargs.pop("savefig", None)
@@ -87,6 +89,7 @@ def with_tight_layout(plotting_func: Callable[P, Figure]) -> Callable[P, Figure]
     -------
     Callable[P, Figure]
         The plotting function with tight layout.
+
     """
 
     @wraps(plotting_func)
@@ -115,6 +118,7 @@ def with_ax(plotting_func: Callable[P, R]) -> Callable[P, R]:
     -------
     Callable[P, R]
         The plotting function with axes.
+
     """
 
     @wraps(plotting_func)

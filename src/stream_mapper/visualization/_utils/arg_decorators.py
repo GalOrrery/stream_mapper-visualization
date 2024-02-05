@@ -36,6 +36,7 @@ def with_sorter(plotting_func: Callable[P, R]) -> Callable[P, R]:
     -------
     Callable[P, R]
         The plotting function with a sorter.
+
     """
     sig = inspect.signature(plotting_func)
 
@@ -67,6 +68,7 @@ def make_tuple(*arg_names: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
     -------
     Callable[[Callable[P, R]], Callable[P, R]]
         The decorator.
+
     """
 
     def make_tuple_inner(plotting_func: Callable[P, R]) -> Callable[P, R]:
@@ -81,6 +83,7 @@ def make_tuple(*arg_names: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
         -------
         Callable[P, R]
             The plotting function with a tuple.
+
         """
         sig = inspect.signature(plotting_func)
 

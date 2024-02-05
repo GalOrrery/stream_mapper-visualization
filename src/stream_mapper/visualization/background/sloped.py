@@ -27,6 +27,7 @@ class sloped_distribution(rv_continuous):  # noqa: N801
         The tolerance used when calculating the inverse of the CDF.
     seed : int or None, optional
         Seed for the random number generator.
+
     """
 
     def __init__(  # noqa: PLR0913

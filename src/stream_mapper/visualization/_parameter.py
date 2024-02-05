@@ -90,6 +90,7 @@ def parameter(  # noqa: PLR0913
         The sorter to use.
     **kwargs : dict[str, Any], keyword-only
         Keyword arguments to pass to `~matplotlib.axes.Axe.plot`.
+
     """
     # Iterate over components
     for comp in components:
