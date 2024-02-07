@@ -117,6 +117,7 @@ def plot_coordinates_in_slices(  # noqa: PLR0913
     -------
     `matplotlib.figure.Figure`
         The figure.
+
     """
     fig, ax0, axes = _make_fig_and_axes(
         x_edges=x_edges,

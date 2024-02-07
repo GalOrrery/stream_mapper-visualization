@@ -30,6 +30,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
     small_m_approx_threshold : float, optional keyword-only
         When to switch to an approximation of the PDF
         that is valid for small values of m.
+
     """
 
     def __init__(  # noqa: PLR0913
@@ -101,8 +102,7 @@ class exponential_like_distribution(rv_continuous):  # noqa: N801
                 ((x - a) / (b - a) / 24)
                 * (
                     12
-                    + m
-                    * (2 * a + 2 * b + a * b * m - (4 + m * (a + b)) * x + m * x**2)
+                    + m * (2 * a + 2 * b + a * b * m - (4 + m * (a + b)) * x + m * x**2)
                 )
             )
 

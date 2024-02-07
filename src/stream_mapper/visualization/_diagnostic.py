@@ -122,6 +122,7 @@ def _plot_coordinate_component(  # noqa: PLR0913
     -------
     Axes
         The axes that were plotted on.
+
     """
     ps = mpars.get_prefixed(component)
 
@@ -210,9 +211,11 @@ def _plot_coordinate_panel(  # noqa: PLR0913
         background_weight = (f"{BACKGROUND_KEY}.{WEIGHT_NAME}",)
         ax_top.plot(
             data[indep_coord].flatten(),
-            np.log(mpars[background_weight].flatten())
-            if log_weight
-            else mpars[background_weight].flatten(),
+            (
+                np.log(mpars[background_weight].flatten())
+                if log_weight
+                else mpars[background_weight].flatten()
+            ),
             color="black",
             label="background[weight]",
         )
@@ -306,6 +309,7 @@ def astrometric_model_panels(  # noqa: PLR0913
     -------
     Figure
         The figure that was plotted.
+
     """
     if "coord" in kwargs:
         msg = "Use `coords` instead of `coord`."

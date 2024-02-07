@@ -57,6 +57,7 @@ def coord_panels(
     -------
     `matplotlib.figure.Figure`
         The figure.
+
     """
     fig, axs = plt.subplots(1, len(coords), figsize=(4 * len(coords), 4))
 

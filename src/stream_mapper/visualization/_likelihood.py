@@ -57,6 +57,7 @@ def component_likelihood(
     -------
     `~matplotlib.figure.Figure`
         The figure.
+
     """
     # Sort and shade the data by the probability, with the most probable plotted
     # on top.
