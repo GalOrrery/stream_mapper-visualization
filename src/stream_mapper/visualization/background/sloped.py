@@ -30,7 +30,7 @@ class sloped_distribution(rv_continuous):  # noqa: N801
 
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         slope: float,
         a: float,
