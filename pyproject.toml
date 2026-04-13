@@ -23,7 +23,7 @@
   ]
   dependencies = [
     "astropy>=5.0",
-    "matplotlib>=3.4",
+    "matplotlib>=3.9.4",
     "numpy>=1.21",
     "numexpr>=2.7",
     "stream_mapper.core",
