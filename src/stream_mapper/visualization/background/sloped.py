@@ -36,7 +36,7 @@ class sloped_distribution(rv_continuous):  # noqa: N801
         a: float,
         b: float,
         xtol: float = 1e-14,
-        seed: int | None | np.random.RandomState | np.random.Generator = None,
+        seed: int | np.random.RandomState | np.random.Generator | None = None,
     ) -> None:
         if a > b:
             msg = "a must be less than b"
